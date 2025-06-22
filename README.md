@@ -108,7 +108,7 @@ pip install torch==2.5.1+cu118 torchaudio==2.5.1+cu118 --index-url https://downl
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/psyche-mend.git
+git clone https://github.com/JinsJK/psyche-mend.git
 cd psyche-mend
 ```
 
