@@ -1,0 +1,73 @@
+/* Base bubble layout wrapper */
+.bubble-wrapper {
+  display: flex;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+/* Right-aligned USER message */
+.bubble-wrapper.user {
+  justify-content: flex-end;
+}
+
+/* Left-aligned BOT message */
+.bubble-wrapper.bot {
+  justify-content: flex-start;
+}
+
+/* User and bot avatar styling */
+.bubble-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 0.5rem;
+}
+
+/* Base bubble */
+.bubble {
+  max-width: 60%;
+  width: fit-content;
+  padding: 0.75rem 1rem;
+  border-radius: 1rem;
+  font-size: 1rem;
+  line-height: 1.4;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  word-break: break-word;
+  animation: fadeSlideUp 0.4s ease forwards;
+}
+
+/* User bubble: light green */
+.bubble.user {
+  background: #d8ede5;
+  color: #000000;
+  flex-direction: row-reverse;
+}
+
+/* Bot bubble: light cream */
+.bubble.bot {
+  background: #fff8f0;
+  color: #222;
+}
+
+.text {
+  font-size: 1rem;
+}
+
+.emotion {
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  color: #777;
+}
+
+/* Entry animation */
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

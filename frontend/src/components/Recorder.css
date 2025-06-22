@@ -1,0 +1,65 @@
+/* Recorder button container */
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+/* Recorder button */
+.record-btn {
+  padding: 0.5rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 8px;
+  border: 2px solid #007bff;
+  background-color: white;
+  color: #007bff;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  position: relative;
+  min-width: 180px;
+}
+
+.record-btn:hover {
+  background-color: #007bff;
+  color: white;
+  box-shadow: 0 2px 6px rgba(0, 123, 255, 0.3);
+}
+
+/* Prevent hover styles while actively recording */
+.record-btn.recording:hover {
+  background-color: white;
+  color: #007bff;
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.4);
+}
+
+/* Focus accessibility */
+.record-btn:focus {
+  outline: 2px solid #007bff;
+}
+
+/* Disabled state */
+.record-btn:disabled {
+  background-color: #ccc;
+  color: #666;
+  border: 2px solid #ccc;
+  cursor: not-allowed;
+}
+
+/* Listening indicator */
+.active-text {
+  animation: pulse-glow 1.4s infinite ease-in-out;
+  font-size: 14px;
+  font-weight: bold;
+  color: #ff4c4c;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    text-shadow: 0 0 4px #ff4c4c, 0 0 10px rgba(255, 76, 76, 0.5);
+  }
+  50% {
+    text-shadow: 0 0 12px #ff4c4c, 0 0 24px rgba(255, 76, 76, 0.6);
+  }
+}

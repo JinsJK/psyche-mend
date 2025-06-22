@@ -1,0 +1,33 @@
+# --- Core Framework ---
+fastapi==0.95.2
+uvicorn==0.22.0
+python-multipart==0.0.9
+
+
+# --- NLP / Sentiment Analysis ---
+transformers==4.36.2
+
+# PyTorch GPU versions must be installed separately from:
+# pip install torch==2.5.1+cu118 torchaudio==2.5.1+cu118 --index-url https://download.pytorch.org/whl/cu118
+# Uncomment for GPU (CUDA 11.8)
+
+torch==2.5.1               # Default for CPU
+torchaudio==2.5.1
+
+# --- Whisper STT ---
+openai-whisper==20231117
+ffmpeg-python==0.2.0
+
+# --- GPT Integration ---
+openai==0.28.1
+
+# --- Text-to-Speech (Coqui TTS) ---
+TTS==0.22.0
+numpy==1.22.0
+librosa==0.10.0
+scipy==1.11.4
+gruut[de,es,fr]==2.2.3     # Supports multilingual synthesis
+
+# --- Utilities ---
+python-dotenv==1.0.1
+pydub==0.25.1

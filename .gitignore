@@ -1,0 +1,40 @@
+# --- Root .gitignore ---
+
+# Python virtual environments
+psyche-mend-env/
+venv/
+__pycache__/
+*.pyc
+
+# Environment variables
+.env
+
+# Audio output (temporary runtime data)
+audio/
+audio_samples/
+
+# Preserve folder structure
+!audio/.gitkeep
+!audio_samples/.gitkeep
+
+# Logs and OS junk
+*.log
+.DS_Store
+
+# IDE/editor configs
+.vscode/*
+!.vscode/settings.json
+
+# Node.js dependencies (in frontend/)
+frontend/node_modules/
+
+# Frontend build output
+frontend/dist/
+frontend/dist-ssr/
+
+# Local overrides
+*.local
+
+# Output media files
+*.wav
+*.webm
