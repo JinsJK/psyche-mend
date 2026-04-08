@@ -16,6 +16,7 @@ from backend.speech_to_text import transcribe_audio
 from backend.sentiment import detect_emotion
 from backend.response_gen import generate_response
 from backend.text_to_speech import synthesize_speech
+from backend.logger import log_event
 
 
 #Cleanup old audio files on startup
@@ -53,10 +54,14 @@ chat_histories = {}
 async def talk(request: Request, audio: UploadFile = File(...)):
     session_id = request.client.host
     audio_id = str(uuid.uuid4())
+    request_id = str(uuid.uuid4())
 
     raw_path = f"audio_samples/{audio_id}_raw.webm"
     input_path = f"audio_samples/{audio_id}_input.wav"
     output_path = f"audio/{audio_id}_reply.wav"
+
+    t_request_start = time.perf_counter()
+    log_event(request_id, "api_start", "success", input_type="voice")
 
     # Save and convert the uploaded audio
     with open(raw_path, "wb") as f:
@@ -66,25 +71,39 @@ async def talk(request: Request, audio: UploadFile = File(...)):
         audio_segment = AudioSegment.from_file(raw_path)
         audio_segment.export(input_path, format="wav")
     except Exception as e:
+        log_event(request_id, "api_start", "error", error_type="AudioConversionError", input_type="voice")
         return JSONResponse(status_code=500, content={"error": f"Audio conversion failed: {str(e)}"})
 
-
+    t0 = time.perf_counter()
     text = transcribe_audio(input_path)
-    emotion = detect_emotion(text)
-    history = chat_histories.get(session_id, [])
-    reply = generate_response(text, emotion, history)
-    synthesize_speech(reply, output_path)
+    log_event(request_id, "stt", "success", duration_ms=(time.perf_counter() - t0) * 1000, model="whisper-medium", input_type="voice")
 
+    t0 = time.perf_counter()
+    emotion = detect_emotion(text)
+    log_event(request_id, "emotion", "success", duration_ms=(time.perf_counter() - t0) * 1000, emotion=emotion, model="j-hartmann/emotion-english-distilroberta-base", input_type="voice")
+
+    history = chat_histories.get(session_id, [])
+
+    t0 = time.perf_counter()
+    reply = generate_response(text, emotion, history)
+    log_event(request_id, "llm", "success", duration_ms=(time.perf_counter() - t0) * 1000, emotion=emotion, model="gpt-3.5-turbo", input_type="voice")
+
+    t0 = time.perf_counter()
+    tts_result = synthesize_speech(reply, output_path)
+    if tts_result is None:
+        log_event(request_id, "tts", "error", duration_ms=(time.perf_counter() - t0) * 1000, error_type="TTSError", model="tts_models/en/vctk/vits", input_type="voice")
+    else:
+        log_event(request_id, "tts", "success", duration_ms=(time.perf_counter() - t0) * 1000, model="tts_models/en/vctk/vits", input_type="voice")
 
     history.append({"user": text, "reply": reply})
     chat_histories[session_id] = history
-
 
     for _ in range(50):
         if os.path.exists(output_path):
             break
         time.sleep(0.1)
 
+    log_event(request_id, "api_end", "success", duration_ms=(time.perf_counter() - t_request_start) * 1000, input_type="voice")
     return JSONResponse({
         "transcript": text,
         "emotion": emotion,
@@ -99,18 +118,35 @@ async def text_talk(request: Request):
     payload = await request.json()
     user_text = payload.get("text", "")
     session_id = request.client.host
+    request_id = str(uuid.uuid4())
 
+    t_request_start = time.perf_counter()
+    log_event(request_id, "api_start", "success", input_type="text")
+
+    t0 = time.perf_counter()
     emotion = detect_emotion(user_text)
+    log_event(request_id, "emotion", "success", duration_ms=(time.perf_counter() - t0) * 1000, emotion=emotion, model="j-hartmann/emotion-english-distilroberta-base", input_type="text")
+
     history = chat_histories.get(session_id, [])
+
+    t0 = time.perf_counter()
     reply = generate_response(user_text, emotion, history)
+    log_event(request_id, "llm", "success", duration_ms=(time.perf_counter() - t0) * 1000, emotion=emotion, model="gpt-3.5-turbo", input_type="text")
 
     audio_id = str(uuid.uuid4())
     output_path = f"audio/{audio_id}_reply.wav"
-    synthesize_speech(reply, output_path)
+
+    t0 = time.perf_counter()
+    tts_result = synthesize_speech(reply, output_path)
+    if tts_result is None:
+        log_event(request_id, "tts", "error", duration_ms=(time.perf_counter() - t0) * 1000, error_type="TTSError", model="tts_models/en/vctk/vits", input_type="text")
+    else:
+        log_event(request_id, "tts", "success", duration_ms=(time.perf_counter() - t0) * 1000, model="tts_models/en/vctk/vits", input_type="text")
 
     history.append({"user": user_text, "reply": reply})
     chat_histories[session_id] = history
 
+    log_event(request_id, "api_end", "success", duration_ms=(time.perf_counter() - t_request_start) * 1000, input_type="text")
     return JSONResponse({
         "transcript": user_text,
         "emotion": emotion,

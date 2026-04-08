@@ -78,7 +78,7 @@ Type of Work:
 Configuration / Integration / Debugging
 
 Time Spent:
-[fill in actual time]
+< 1 minute
 
 Impact:
 All responses fell back to the hardcoded string "I'm here to support you. Could you tell me a bit more?" instead of calling GPT.
