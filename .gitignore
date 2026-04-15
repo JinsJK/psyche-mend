@@ -38,3 +38,4 @@ frontend/dist-ssr/
 # Output media files
 *.wav
 *.webm
+.claude/settings.local.json

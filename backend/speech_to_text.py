@@ -1,7 +1,10 @@
 import whisper
 import re
+import torch
 
-model = whisper.load_model("medium")
+device = "cuda" if torch.cuda.is_available() else "cpu"
+model = whisper.load_model("medium", device=device)
+print(f"[GPU] Whisper running on: {device}")
 
 def is_gibberish(text):
     """Detect gibberish or low-quality transcripts."""

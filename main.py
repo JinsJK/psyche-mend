@@ -1,6 +1,10 @@
 from dotenv import load_dotenv
 load_dotenv()
 
+import torch
+print(f"[GPU] CUDA available: {torch.cuda.is_available()}")
+print(f"[GPU] Device: {'cuda' if torch.cuda.is_available() else 'cpu'}")
+
 import os
 import uuid
 import time

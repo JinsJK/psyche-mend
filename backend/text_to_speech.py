@@ -3,6 +3,7 @@ import torch
 
 use_gpu = torch.cuda.is_available()
 tts = TTS(model_name="tts_models/en/vctk/vits", progress_bar=False, gpu=use_gpu)
+print(f"[GPU] TTS running on: {'cuda' if use_gpu else 'cpu'}")
 default_speaker = "p243"
 
 def synthesize_speech(text, output_path="reply.wav"):

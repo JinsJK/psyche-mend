@@ -43,6 +43,14 @@ Text  : api_start → emotion → llm → tts → api_end
 Work Sessions:
 Session 1: ~6–7 minutes — Implement logging system, integrate into pipeline, test logs
 
+Development Approach:
+The implementation was carried out using AI-assisted development. The measured time includes:
+- prompt formulation
+- reviewing generated code at a high level
+- testing and validation of runtime behavior
+
+No manual re-implementation without AI assistance was performed.
+
 Total Time:
 ~6–7 minutes
 
@@ -132,6 +140,9 @@ Additional Observations:
 - Stage-specific model usage is now directly visible in every log line
 - Total request latency can now be read directly from api_end without summing stage durations
 - The logs now provide a clearer basis for comparing multi-stage execution costs across request types
+
+Development Approach:
+This refinement was implemented using AI-assisted development, including prompt formulation, code adjustment, and validation through test runs.
 
 Additional Time Spent:
 ~3 minutes
