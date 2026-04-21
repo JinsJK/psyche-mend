@@ -80,7 +80,30 @@ async def talk(request: Request, audio: UploadFile = File(...)):
 
     t0 = time.perf_counter()
     text = transcribe_audio(input_path)
-    log_event(request_id, "stt", "success", duration_ms=(time.perf_counter() - t0) * 1000, model="whisper-medium", input_type="voice")
+    stt_duration_ms = (time.perf_counter() - t0) * 1000
+
+    if text is None:
+        log_event(request_id, "stt", "error", duration_ms=stt_duration_ms, model="whisper-medium", error_type="UnreliableSTT", input_type="voice")
+        fallback_text = "I'm having trouble understanding the audio. Could you please try again?"
+        t0 = time.perf_counter()
+        tts_result = synthesize_speech(fallback_text, output_path)
+        if tts_result is None:
+            log_event(request_id, "tts", "error", duration_ms=(time.perf_counter() - t0) * 1000, error_type="TTSError", model="tts_models/en/vctk/vits", input_type="voice")
+        else:
+            log_event(request_id, "tts", "success", duration_ms=(time.perf_counter() - t0) * 1000, model="tts_models/en/vctk/vits", input_type="voice")
+        for _ in range(50):
+            if os.path.exists(output_path):
+                break
+            time.sleep(0.1)
+        log_event(request_id, "api_end", "success", duration_ms=(time.perf_counter() - t_request_start) * 1000, input_type="voice")
+        return JSONResponse({
+            "transcript": "",
+            "emotion": "unknown",
+            "reply_text": fallback_text,
+            "reply_audio_url": f"/audio/{audio_id}_reply.wav"
+        })
+
+    log_event(request_id, "stt", "success", duration_ms=stt_duration_ms, model="whisper-medium", input_type="voice")
 
     t0 = time.perf_counter()
     emotion = detect_emotion(text)

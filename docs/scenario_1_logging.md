@@ -44,12 +44,16 @@ Work Sessions:
 Session 1: ~6–7 minutes — Implement logging system, integrate into pipeline, test logs
 
 Development Approach:
-The implementation was carried out using AI-assisted development. The measured time includes:
-- prompt formulation
-- reviewing generated code at a high level
-- testing and validation of runtime behavior
 
-No manual re-implementation without AI assistance was performed.
+The implementation was carried out using AI-assisted development. The measured time represents the workflow from submitting the implementation prompt to final manual validation.
+
+This includes:
+- AI generation of the code changes
+- high-level review of the generated code
+- running the system and executing manual test cases
+- validating runtime behavior through logs and outputs
+
+No manual re-implementation without AI assistance was performed. The primary effort was focused on validation, debugging, and ensuring correct system behavior rather than writing code from scratch.
 
 Total Time:
 ~6–7 minutes
@@ -142,7 +146,16 @@ Additional Observations:
 - The logs now provide a clearer basis for comparing multi-stage execution costs across request types
 
 Development Approach:
-This refinement was implemented using AI-assisted development, including prompt formulation, code adjustment, and validation through test runs.
+
+The implementation was carried out using AI-assisted development. The measured time represents the workflow from submitting the implementation prompt to final manual validation.
+
+This includes:
+- AI generation of the code changes
+- high-level review of the generated code
+- running the system and executing manual test cases
+- validating runtime behavior through logs and outputs
+
+No manual re-implementation without AI assistance was performed. The primary effort was focused on validation, debugging, and ensuring correct system behavior rather than writing code from scratch.
 
 Additional Time Spent:
 ~3 minutes
