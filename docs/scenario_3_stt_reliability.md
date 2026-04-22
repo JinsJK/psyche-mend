@@ -59,8 +59,7 @@ Measurement Method:
   - fallback triggering behavior
 
 Work Sessions:
-Session 1: ~5 minutes — Implementation: English enforcement, STT gating, fallback handling, debug logging, documentation
-Session 2: ~3 minutes — Refinement: improved decoding stability, sanity checks, retry logic, validation
+Session 1: ~8 minutes — Initial implementation and one refinement cycle, including English enforcement, STT gating, fallback handling, decoding stability improvements, sanity checks, retry logic, and manual validation
 
 Development Approach:
 

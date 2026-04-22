@@ -50,8 +50,7 @@ No changes to the logging schema. Existing structured logs (logs/app.log) are us
 - api_end duration_ms — total request latency comparison
 
 Work Sessions:
-Session 1: ~10 minutes — dependency install, code changes to speech_to_text.py, text_to_speech.py, main.py, and requirements.txt; startup validation
-Session 2: ~3 minutes — diagnosed and resolved transformers version drift caused by CUDA torch install; reinstalled transformers==4.36.2
+Session 1: ~13 minutes — GPU enablement, dependency installation, code updates, startup validation, diagnosis of dependency compatibility issue, and one refinement cycle to restore compatibility
 
 Development Approach:
 
