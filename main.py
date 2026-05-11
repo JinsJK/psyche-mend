@@ -113,7 +113,7 @@ async def talk(request: Request, audio: UploadFile = File(...)):
 
     t0 = time.perf_counter()
     reply = generate_response(text, emotion, history)
-    log_event(request_id, "llm", "success", duration_ms=(time.perf_counter() - t0) * 1000, emotion=emotion, model="gpt-3.5-turbo", input_type="voice")
+    log_event(request_id, "llm", "success", duration_ms=(time.perf_counter() - t0) * 1000, emotion=emotion, model="gpt-5.4-mini", input_type="voice")
 
     t0 = time.perf_counter()
     tts_result = synthesize_speech(reply, output_path)
@@ -158,7 +158,7 @@ async def text_talk(request: Request):
 
     t0 = time.perf_counter()
     reply = generate_response(user_text, emotion, history)
-    log_event(request_id, "llm", "success", duration_ms=(time.perf_counter() - t0) * 1000, emotion=emotion, model="gpt-3.5-turbo", input_type="text")
+    log_event(request_id, "llm", "success", duration_ms=(time.perf_counter() - t0) * 1000, emotion=emotion, model="gpt-5.4-mini", input_type="text")
 
     audio_id = str(uuid.uuid4())
     output_path = f"audio/{audio_id}_reply.wav"

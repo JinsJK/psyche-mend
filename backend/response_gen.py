@@ -1,7 +1,8 @@
 import os
-import openai
+from openai import OpenAI
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+MODEL = "gpt-5.4-mini"
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 BLOCKED_PHRASES = [
     "who is", "who was", "what is", "define", "tell me about",
@@ -73,11 +74,11 @@ def generate_response(user_text, emotion, chat_history=None):
     })
 
     try:
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+        response = client.chat.completions.create(
+            model=MODEL,
             messages=messages
         )
-        return response.choices[0].message["content"].strip()
+        return response.choices[0].message.content.strip()
     except Exception as e:
         print(f"[OpenAI Error] {e}")
         return "I'm here with you. Could you say a little more about what's weighing on you?"
