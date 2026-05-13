@@ -112,8 +112,14 @@ async def talk(request: Request, audio: UploadFile = File(...)):
     history = chat_histories.get(session_id, [])
 
     t0 = time.perf_counter()
-    reply = generate_response(text, emotion, history)
-    log_event(request_id, "llm", "success", duration_ms=(time.perf_counter() - t0) * 1000, emotion=emotion, model="gpt-5.4-mini", input_type="voice")
+    reply, retry_count, fallback_used, attempt_errors = generate_response(text, emotion, history)
+    llm_duration = (time.perf_counter() - t0) * 1000
+    for i, err in enumerate(attempt_errors):
+        log_event(request_id, "llm", "error", emotion=emotion, model="gpt-5.4-mini", input_type="voice", retry_count=i, fallback_used=False, error_type=err)
+    if fallback_used:
+        log_event(request_id, "llm", "fallback", duration_ms=llm_duration, emotion=emotion, model="gpt-5.4-mini", input_type="voice", retry_count=retry_count, fallback_used=True, error_type="LLMFailure")
+    else:
+        log_event(request_id, "llm", "success", duration_ms=llm_duration, emotion=emotion, model="gpt-5.4-mini", input_type="voice", retry_count=retry_count, fallback_used=False)
 
     t0 = time.perf_counter()
     tts_result = synthesize_speech(reply, output_path)
@@ -157,8 +163,14 @@ async def text_talk(request: Request):
     history = chat_histories.get(session_id, [])
 
     t0 = time.perf_counter()
-    reply = generate_response(user_text, emotion, history)
-    log_event(request_id, "llm", "success", duration_ms=(time.perf_counter() - t0) * 1000, emotion=emotion, model="gpt-5.4-mini", input_type="text")
+    reply, retry_count, fallback_used, attempt_errors = generate_response(user_text, emotion, history)
+    llm_duration = (time.perf_counter() - t0) * 1000
+    for i, err in enumerate(attempt_errors):
+        log_event(request_id, "llm", "error", emotion=emotion, model="gpt-5.4-mini", input_type="text", retry_count=i, fallback_used=False, error_type=err)
+    if fallback_used:
+        log_event(request_id, "llm", "fallback", duration_ms=llm_duration, emotion=emotion, model="gpt-5.4-mini", input_type="text", retry_count=retry_count, fallback_used=True, error_type="LLMFailure")
+    else:
+        log_event(request_id, "llm", "success", duration_ms=llm_duration, emotion=emotion, model="gpt-5.4-mini", input_type="text", retry_count=retry_count, fallback_used=False)
 
     audio_id = str(uuid.uuid4())
     output_path = f"audio/{audio_id}_reply.wav"

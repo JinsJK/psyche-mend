@@ -28,6 +28,8 @@ def log_event(
     model: str = None,
     error_type: str = None,
     input_type: str = None,
+    retry_count: int = None,
+    fallback_used: bool = None,
 ) -> None:
     record = {
         "timestamp": datetime.now(timezone.utc).isoformat(timespec="milliseconds").replace("+00:00", "Z"),
@@ -39,5 +41,7 @@ def log_event(
         "model": model,
         "error_type": error_type,
         "input_type": input_type,
+        "retry_count": retry_count,
+        "fallback_used": fallback_used,
     }
     _logger.info(json.dumps(record))

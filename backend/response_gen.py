@@ -9,12 +9,17 @@ BLOCKED_PHRASES = [
     "capital of", "history of"
 ]
 
+FALLBACK_RESPONSE = "I'm here with you. Could you say a little more about what's weighing on you?"
+
 def generate_response(user_text, emotion, chat_history=None):
     """Generates a supportive AI response using OpenAI."""
     if any(phrase in user_text.lower() for phrase in BLOCKED_PHRASES):
         return (
             "I'm here to support your emotional well-being. "
-            "Let's stay with what you're feeling right now."
+            "Let's stay with what you're feeling right now.",
+            0,
+            False,
+            [],
         )
 
     messages = [{
@@ -73,12 +78,17 @@ def generate_response(user_text, emotion, chat_history=None):
         )
     })
 
+    attempt_errors = []
     try:
-        response = client.chat.completions.create(
-            model=MODEL,
-            messages=messages
-        )
-        return response.choices[0].message.content.strip()
+        response = client.chat.completions.create(model=MODEL, messages=messages, timeout=10)
+        return response.choices[0].message.content.strip(), 0, False, []
     except Exception as e:
-        print(f"[OpenAI Error] {e}")
-        return "I'm here with you. Could you say a little more about what's weighing on you?"
+        print(f"[LLM Attempt 1 Failed] {e}")
+        attempt_errors.append(type(e).__name__)
+        try:
+            response = client.chat.completions.create(model=MODEL, messages=messages, timeout=10)
+            return response.choices[0].message.content.strip(), 1, False, attempt_errors
+        except Exception as e2:
+            print(f"[LLM Retry Failed] {e2}")
+            attempt_errors.append(type(e2).__name__)
+            return FALLBACK_RESPONSE, 1, True, attempt_errors

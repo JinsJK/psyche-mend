@@ -90,8 +90,8 @@ Total Time:
 11 minutes 34 seconds
 
 Breakdown:
-- Initial dependency modernization and validation: 9 minutes 23 seconds
-- Follow-up refinement for deprecated TTS gpu argument: 2 minutes 11 seconds
+- Iteration 1 — Dependency modernization and validation: 9 minutes 23 seconds
+- Iteration 2 — Deprecated TTS gpu argument removal: 2 minutes 11 seconds
 
 Iterations:
 2

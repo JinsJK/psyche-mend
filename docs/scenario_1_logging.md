@@ -56,10 +56,14 @@ This includes:
 No manual re-implementation without AI assistance was performed. The primary effort was focused on validation, debugging, and ensuring correct system behavior rather than writing code from scratch.
 
 Total Time:
-~6–7 minutes
+~9–10 minutes
+
+Breakdown:
+- Iteration 1 — Initial structured logging implementation: ~6–7 minutes
+- Iteration 2 — Model names, request duration, and input_type refinement: ~3 minutes
 
 Iterations:
-1
+2
 
 Files Changed:
 backend/logger.py          — Created logging utility
