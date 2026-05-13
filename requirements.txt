@@ -13,7 +13,7 @@ transformers==4.36.2
 # torchaudio==2.5.1           # CPU fallback
 
 # --- Whisper STT ---
-openai-whisper==20231117
+openai-whisper==20250625
 ffmpeg-python==0.2.0
 
 # --- GPT Integration ---
@@ -21,9 +21,9 @@ openai>=1.0.0
 
 # --- Text-to-Speech (Coqui TTS) ---
 TTS==0.22.0
-numpy==1.22.0
+numpy==1.26.4
 librosa==0.10.0
-scipy==1.11.4
+scipy==1.13.1
 gruut[de,es,fr]==2.2.3     # Supports multilingual synthesis
 
 # --- Utilities ---
