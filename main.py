@@ -21,6 +21,7 @@ from backend.sentiment import detect_emotion
 from backend.response_gen import generate_response
 from backend.text_to_speech import synthesize_speech
 from backend.logger import log_event
+from backend.config import OPENAI_MODEL, WHISPER_LOG_MODEL_NAME, EMOTION_MODEL_NAME, TTS_MODEL_NAME
 
 
 #Cleanup old audio files on startup
@@ -83,14 +84,14 @@ async def talk(request: Request, audio: UploadFile = File(...)):
     stt_duration_ms = (time.perf_counter() - t0) * 1000
 
     if text is None:
-        log_event(request_id, "stt", "error", duration_ms=stt_duration_ms, model="whisper-medium", error_type="UnreliableSTT", input_type="voice")
+        log_event(request_id, "stt", "error", duration_ms=stt_duration_ms, model=WHISPER_LOG_MODEL_NAME, error_type="UnreliableSTT", input_type="voice")
         fallback_text = "I'm having trouble understanding the audio. Could you please try again?"
         t0 = time.perf_counter()
         tts_result = synthesize_speech(fallback_text, output_path)
         if tts_result is None:
-            log_event(request_id, "tts", "error", duration_ms=(time.perf_counter() - t0) * 1000, error_type="TTSError", model="tts_models/en/vctk/vits", input_type="voice")
+            log_event(request_id, "tts", "error", duration_ms=(time.perf_counter() - t0) * 1000, error_type="TTSError", model=TTS_MODEL_NAME, input_type="voice")
         else:
-            log_event(request_id, "tts", "success", duration_ms=(time.perf_counter() - t0) * 1000, model="tts_models/en/vctk/vits", input_type="voice")
+            log_event(request_id, "tts", "success", duration_ms=(time.perf_counter() - t0) * 1000, model=TTS_MODEL_NAME, input_type="voice")
         for _ in range(50):
             if os.path.exists(output_path):
                 break
@@ -103,11 +104,11 @@ async def talk(request: Request, audio: UploadFile = File(...)):
             "reply_audio_url": f"/audio/{audio_id}_reply.wav"
         })
 
-    log_event(request_id, "stt", "success", duration_ms=stt_duration_ms, model="whisper-medium", input_type="voice")
+    log_event(request_id, "stt", "success", duration_ms=stt_duration_ms, model=WHISPER_LOG_MODEL_NAME, input_type="voice")
 
     t0 = time.perf_counter()
     emotion = detect_emotion(text)
-    log_event(request_id, "emotion", "success", duration_ms=(time.perf_counter() - t0) * 1000, emotion=emotion, model="j-hartmann/emotion-english-distilroberta-base", input_type="voice")
+    log_event(request_id, "emotion", "success", duration_ms=(time.perf_counter() - t0) * 1000, emotion=emotion, model=EMOTION_MODEL_NAME, input_type="voice")
 
     history = chat_histories.get(session_id, [])
 
@@ -115,18 +116,18 @@ async def talk(request: Request, audio: UploadFile = File(...)):
     reply, retry_count, fallback_used, attempt_errors = generate_response(text, emotion, history)
     llm_duration = (time.perf_counter() - t0) * 1000
     for i, err in enumerate(attempt_errors):
-        log_event(request_id, "llm", "error", emotion=emotion, model="gpt-5.4-mini", input_type="voice", retry_count=i, fallback_used=False, error_type=err)
+        log_event(request_id, "llm", "error", emotion=emotion, model=OPENAI_MODEL, input_type="voice", retry_count=i, fallback_used=False, error_type=err)
     if fallback_used:
-        log_event(request_id, "llm", "fallback", duration_ms=llm_duration, emotion=emotion, model="gpt-5.4-mini", input_type="voice", retry_count=retry_count, fallback_used=True, error_type="LLMFailure")
+        log_event(request_id, "llm", "fallback", duration_ms=llm_duration, emotion=emotion, model=OPENAI_MODEL, input_type="voice", retry_count=retry_count, fallback_used=True, error_type="LLMFailure")
     else:
-        log_event(request_id, "llm", "success", duration_ms=llm_duration, emotion=emotion, model="gpt-5.4-mini", input_type="voice", retry_count=retry_count, fallback_used=False)
+        log_event(request_id, "llm", "success", duration_ms=llm_duration, emotion=emotion, model=OPENAI_MODEL, input_type="voice", retry_count=retry_count, fallback_used=False)
 
     t0 = time.perf_counter()
     tts_result = synthesize_speech(reply, output_path)
     if tts_result is None:
-        log_event(request_id, "tts", "error", duration_ms=(time.perf_counter() - t0) * 1000, error_type="TTSError", model="tts_models/en/vctk/vits", input_type="voice")
+        log_event(request_id, "tts", "error", duration_ms=(time.perf_counter() - t0) * 1000, error_type="TTSError", model=TTS_MODEL_NAME, input_type="voice")
     else:
-        log_event(request_id, "tts", "success", duration_ms=(time.perf_counter() - t0) * 1000, model="tts_models/en/vctk/vits", input_type="voice")
+        log_event(request_id, "tts", "success", duration_ms=(time.perf_counter() - t0) * 1000, model=TTS_MODEL_NAME, input_type="voice")
 
     history.append({"user": text, "reply": reply})
     chat_histories[session_id] = history
@@ -158,7 +159,7 @@ async def text_talk(request: Request):
 
     t0 = time.perf_counter()
     emotion = detect_emotion(user_text)
-    log_event(request_id, "emotion", "success", duration_ms=(time.perf_counter() - t0) * 1000, emotion=emotion, model="j-hartmann/emotion-english-distilroberta-base", input_type="text")
+    log_event(request_id, "emotion", "success", duration_ms=(time.perf_counter() - t0) * 1000, emotion=emotion, model=EMOTION_MODEL_NAME, input_type="text")
 
     history = chat_histories.get(session_id, [])
 
@@ -166,11 +167,11 @@ async def text_talk(request: Request):
     reply, retry_count, fallback_used, attempt_errors = generate_response(user_text, emotion, history)
     llm_duration = (time.perf_counter() - t0) * 1000
     for i, err in enumerate(attempt_errors):
-        log_event(request_id, "llm", "error", emotion=emotion, model="gpt-5.4-mini", input_type="text", retry_count=i, fallback_used=False, error_type=err)
+        log_event(request_id, "llm", "error", emotion=emotion, model=OPENAI_MODEL, input_type="text", retry_count=i, fallback_used=False, error_type=err)
     if fallback_used:
-        log_event(request_id, "llm", "fallback", duration_ms=llm_duration, emotion=emotion, model="gpt-5.4-mini", input_type="text", retry_count=retry_count, fallback_used=True, error_type="LLMFailure")
+        log_event(request_id, "llm", "fallback", duration_ms=llm_duration, emotion=emotion, model=OPENAI_MODEL, input_type="text", retry_count=retry_count, fallback_used=True, error_type="LLMFailure")
     else:
-        log_event(request_id, "llm", "success", duration_ms=llm_duration, emotion=emotion, model="gpt-5.4-mini", input_type="text", retry_count=retry_count, fallback_used=False)
+        log_event(request_id, "llm", "success", duration_ms=llm_duration, emotion=emotion, model=OPENAI_MODEL, input_type="text", retry_count=retry_count, fallback_used=False)
 
     audio_id = str(uuid.uuid4())
     output_path = f"audio/{audio_id}_reply.wav"
@@ -178,9 +179,9 @@ async def text_talk(request: Request):
     t0 = time.perf_counter()
     tts_result = synthesize_speech(reply, output_path)
     if tts_result is None:
-        log_event(request_id, "tts", "error", duration_ms=(time.perf_counter() - t0) * 1000, error_type="TTSError", model="tts_models/en/vctk/vits", input_type="text")
+        log_event(request_id, "tts", "error", duration_ms=(time.perf_counter() - t0) * 1000, error_type="TTSError", model=TTS_MODEL_NAME, input_type="text")
     else:
-        log_event(request_id, "tts", "success", duration_ms=(time.perf_counter() - t0) * 1000, model="tts_models/en/vctk/vits", input_type="text")
+        log_event(request_id, "tts", "success", duration_ms=(time.perf_counter() - t0) * 1000, model=TTS_MODEL_NAME, input_type="text")
 
     history.append({"user": user_text, "reply": reply})
     chat_histories[session_id] = history

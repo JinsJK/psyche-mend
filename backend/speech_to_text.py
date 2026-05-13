@@ -1,9 +1,10 @@
 import whisper
 import re
 import torch
+from backend.config import WHISPER_MODEL_NAME
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
-model = whisper.load_model("medium", device=device)
+model = whisper.load_model(WHISPER_MODEL_NAME, device=device)
 print(f"[GPU] Whisper running on: {device}")
 
 # Known Whisper hallucination phrases that appear when audio is silent or unclear

@@ -1,9 +1,9 @@
 from transformers import pipeline
+from backend.config import EMOTION_MODEL_NAME
 
-# Load sentiment/emotion model once
 emotion_classifier = pipeline(
     "text-classification",
-    model="j-hartmann/emotion-english-distilroberta-base",
+    model=EMOTION_MODEL_NAME,
     top_k=None
 )
 

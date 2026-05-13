@@ -1,7 +1,7 @@
 import os
 from openai import OpenAI
+from backend.config import OPENAI_MODEL, LLM_TIMEOUT_SECONDS
 
-MODEL = "gpt-5.4-mini"
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 BLOCKED_PHRASES = [
@@ -80,13 +80,13 @@ def generate_response(user_text, emotion, chat_history=None):
 
     attempt_errors = []
     try:
-        response = client.chat.completions.create(model=MODEL, messages=messages, timeout=10)
+        response = client.chat.completions.create(model=OPENAI_MODEL, messages=messages, timeout=LLM_TIMEOUT_SECONDS)
         return response.choices[0].message.content.strip(), 0, False, []
     except Exception as e:
         print(f"[LLM Attempt 1 Failed] {e}")
         attempt_errors.append(type(e).__name__)
         try:
-            response = client.chat.completions.create(model=MODEL, messages=messages, timeout=10)
+            response = client.chat.completions.create(model=OPENAI_MODEL, messages=messages, timeout=LLM_TIMEOUT_SECONDS)
             return response.choices[0].message.content.strip(), 1, False, attempt_errors
         except Exception as e2:
             print(f"[LLM Retry Failed] {e2}")

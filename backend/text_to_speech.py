@@ -1,11 +1,12 @@
 from TTS.api import TTS
 import torch
+from backend.config import TTS_MODEL_NAME, TTS_SPEAKER_ID
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
-tts = TTS(model_name="tts_models/en/vctk/vits", progress_bar=False)
+tts = TTS(model_name=TTS_MODEL_NAME, progress_bar=False)
 tts.to(device)
 print(f"[GPU] TTS running on: {device}")
-default_speaker = "p243"
+default_speaker = TTS_SPEAKER_ID
 
 def synthesize_speech(text, output_path="reply.wav"):
     """Generate speech from text and save as audio."""

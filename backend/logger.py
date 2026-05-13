@@ -3,13 +3,14 @@ import json
 import os
 from datetime import datetime, timezone
 from logging.handlers import RotatingFileHandler
+from backend.config import LOG_FILE_PATH, LOG_MAX_BYTES, LOG_BACKUP_COUNT
 
 os.makedirs("logs", exist_ok=True)
 
 _handler = RotatingFileHandler(
-    "logs/app.log",
-    maxBytes=5 * 1024 * 1024,
-    backupCount=5,
+    LOG_FILE_PATH,
+    maxBytes=LOG_MAX_BYTES,
+    backupCount=LOG_BACKUP_COUNT,
     encoding="utf-8",
 )
 
