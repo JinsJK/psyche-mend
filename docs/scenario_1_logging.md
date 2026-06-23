@@ -42,6 +42,7 @@ Text  : api_start → emotion → llm → tts → api_end
 
 Work Sessions:
 Session 1: ~6–7 minutes — Implement logging system, integrate into pipeline, test logs
+Session 2: ~3 minutes — Follow-up refinement to add model names, total request duration, and input_type to the structured logs
 
 Development Approach:
 
@@ -57,10 +58,6 @@ No manual re-implementation without AI assistance was performed. The primary eff
 
 Total Time:
 ~9–10 minutes
-
-Breakdown:
-- Iteration 1 — Initial structured logging implementation: ~6–7 minutes
-- Iteration 2 — Model names, request duration, and input_type refinement: ~3 minutes
 
 Iterations:
 2
