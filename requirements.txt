@@ -17,7 +17,7 @@ openai-whisper==20250625
 ffmpeg-python==0.2.0
 
 # --- GPT Integration ---
-openai>=1.0.0
+openai==2.36.0
 
 # --- Text-to-Speech (Coqui TTS) ---
 TTS==0.22.0
